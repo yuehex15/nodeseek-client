@@ -46,16 +46,20 @@ jobs:
       - name: 构建 Nodeseek 客户端
         run: cargo tauri build --bundles msi
 
-      - name: 上传 MSI 安装包
-        uses: actions/upload-artifact@v4
+      - name: 创建 Release
+        uses: ncipollo/release-action@v1
         with:
-          name: Nodeseek-Windows-x64
-          path: src-tauri/target/release/bundle/msi/*.msi
-          compression-level: 0
-
-      - name: 上传 .exe
-        uses: actions/upload-artifact@v4
-        with:
-          name: Nodeseek-Windows-x64-exe
-          path: src-tauri/target/release/*.exe
-          compression-level: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ github.run_number }}
+          name: "Nodeseek v${{ github.run_number }}"
+          body: |
+            Nodeseek 轻量 Windows 客户端自动构建
+            
+            - 构建时间: ${{ github.event.head_commit.timestamp || github.event.repository.updated_at }}
+            - 提交: ${{ github.sha }}
+          artifacts: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/app.exe
+          artifactContentType: application/octet-stream
+          draft: false
+          prerelease: false
