@@ -1,22 +1,15 @@
 // Nodeseek 客户端 - 极轻量 Tauri 壳
-// 专为低内存设备优化（如小米平板2, 2GB RAM）
 
-// 打开外部链接的系统默认浏览器
+use tauri::WebviewWindowExt;
+
 #[tauri::command]
 fn open_external(url: String) {
     #[cfg(target_os = "windows")]
-    {
-        let _ = std::process::Command::new("cmd")
-            .args(["/C", "start", "", &url])
-            .spawn();
-    }
+    { let _ = std::process::Command::new("cmd").args(["/C", "start", "", &url]).spawn(); }
     #[cfg(not(target_os = "windows"))]
-    {
-        let _ = std::process::Command::new("xdg-open").arg(&url).spawn();
-    }
+    { let _ = std::process::Command::new("xdg-open").arg(&url).spawn(); }
 }
 
-// 窗口导航控制
 #[tauri::command]
 fn navigate(window: tauri::Window, action: String) -> Result<(), String> {
     match action.as_str() {
@@ -29,7 +22,6 @@ fn navigate(window: tauri::Window, action: String) -> Result<(), String> {
     Ok(())
 }
 
-// 切换全屏
 #[tauri::command]
 fn toggle_fullscreen(window: tauri::Window) -> Result<(), String> {
     let is_full = window.is_fullscreen().map_err(|e| e.to_string())?;
@@ -40,9 +32,7 @@ fn toggle_fullscreen(window: tauri::Window) -> Result<(), String> {
 pub fn run() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            open_external,
-            navigate,
-            toggle_fullscreen
+            open_external, navigate, toggle_fullscreen
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
