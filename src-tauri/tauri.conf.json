@@ -2,6 +2,7 @@
   "productName": "Nodeseek",
   "version": "0.1.0",
   "identifier": "com.nodeseek.client",
+  "mainBinaryName": "Nodeseek",
   "build": {
     "frontendDist": "../dist"
   },
